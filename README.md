@@ -1,6 +1,6 @@
 # Governed Information Model (GIM) Core
 
-`governed-im-core` (GIM) is a Deno Typescript module which helps define entities, attributes, values,
+`governed-im` (GIM) is a Deno Typescript module which helps define entities, attributes, values,
 graphs and related objects for generation of SQL and other storage engine artifacts.
 
 The GIM module is designed to specify, in a storage-engine and database agnostic approach, complex
@@ -25,3 +25,13 @@ Types of generators:
 
 - Destructive SQL (DDL, data deletions, etc.)
 - Idempotent SQL (upserts, views, stored procedures, etc.)
+
+# Structure
+
+This is a monorepo with three related libraries that work together but are isolated for code
+management purposes:
+
+* `core`
+* `transform`
+* `typical`
+
