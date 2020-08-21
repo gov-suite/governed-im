@@ -199,6 +199,14 @@ export function isEncryptedText(a: Attribute): a is EncryptedText {
   return "isEncryptedText" in a;
 }
 
+export interface Boolean extends Attribute {
+  readonly isBoolean: boolean;
+  readonly isDefaultBooleanValue?: boolean;
+}
+
+export function isBoolean(a: Attribute): a is Boolean {
+  return "isBoolean" in a;
+}
 export interface DelimitedTextList extends Text {
   readonly isTextDelimitedList: boolean;
 }
@@ -256,6 +264,13 @@ export function isDefaultToNow(a: Attribute): boolean {
   }
   if (isTime(a)) {
     if (a.isDefaultToNow) return a.isDefaultToNow;
+  }
+  return false;
+}
+
+export function isDefaultBooleanValue(a: Attribute): boolean {
+  if (isBoolean(a)) {
+    if (a.isDefaultBooleanValue) return a.isDefaultBooleanValue;
   }
   return false;
 }
@@ -691,6 +706,46 @@ export class EagsAttrFactory {
         return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.Integer"];
       }
       value(supplied: number): AttributeValue {
+        return {
+          attr: this,
+          attrValue: supplied,
+          isValid: true,
+        };
+      }
+    })();
+  }
+  public boolean(
+    entity: Entity,
+    name: string | AttributeName,
+    options?: { required?: boolean; derivedFrom?: Attribute },
+  ): Boolean {
+    const factory = this;
+    return new (class implements Boolean {
+      readonly introduced: Revision = factory.defaultRevision();
+      readonly isAttribute: true = true;
+      readonly isRelationship: boolean = false;
+      readonly isDerived: boolean = options?.derivedFrom ? true : false;
+      readonly derivedFrom?: Attribute = options?.derivedFrom;
+      readonly isBoolean: boolean = true;
+      readonly isDefaultBooleanValue: boolean = true;
+      readonly name: AttributeName = typeof name === "string"
+        ? attributeName(name)
+        : name;
+      readonly parent = entity;
+      derive(newParent: Entity, daOptions?: DeriveAttributeOptions): Attribute {
+        return factory.boolean(
+          newParent,
+          daOptions?.name || this.name,
+          { derivedFrom: daOptions?.derivedFrom || this },
+        );
+      }
+      isRequired(ctx: cm.Context): boolean {
+        return options ? (options.required ? true : false) : true;
+      }
+      registryKeys(ctx: cm.Context): AttributeRegistryKeys {
+        return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.Boolean"];
+      }
+      value(supplied: any): AttributeValue {
         return {
           attr: this,
           attrValue: supplied,

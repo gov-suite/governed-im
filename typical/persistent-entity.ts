@@ -265,6 +265,10 @@ export class TypicalPersistentEntity
     return this.params.attrFactory.dateTime(this, name, { required });
   }
 
+  public boolean(name: string, required: boolean = true): core.Boolean {
+    return this.params.attrFactory.boolean(this, name, { required });
+  }
+
   public Json(
     name: string,
     required: boolean = true,
