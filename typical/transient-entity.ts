@@ -78,6 +78,10 @@ export class TypicalTransientEntity implements core.TransientEntity {
     return this.params.attrFactory.integer(this, name, { required });
   }
 
+  public boolean(name: string, required: boolean = true): core.Boolean {
+    return this.params.attrFactory.boolean(this, name, { required });
+  }
+
   public dateTime(name: string, required: boolean = true): core.DateTime {
     return this.params.attrFactory.dateTime(this, name, { required });
   }
