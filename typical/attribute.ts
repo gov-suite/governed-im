@@ -1,4 +1,4 @@
-import * as core from "../core/mod.ts";
+import type * as core from "../core/mod.ts";
 
 export type TypicalAttrFactory = core.EagsAttrFactory;
 

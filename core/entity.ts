@@ -1,11 +1,11 @@
-import * as attr from "./attribute.ts";
+import type * as attr from "./attribute.ts";
 import {
   contextMgr as cm,
   inflect as infl,
   namespaceMgr as ns,
 } from "./deps.ts";
-import { Revision } from "./revision.ts";
-import { Transient } from "./transient.ts";
+import type { Revision } from "./revision.ts";
+import type { Transient } from "./transient.ts";
 
 export type EntityName = infl.PluralizableValue;
 export type BackRefName = infl.PluralizableValue;
@@ -48,8 +48,8 @@ export interface Entity extends attr.AttributesCollection {
   registryKeys(ctx: cm.Context): EntityRegistryKeys;
 }
 
-export function isEntity(e: object): e is Entity {
-  return "isEntity" in e;
+export function isEntity(e: unknown): e is Entity {
+  return e && typeof e === "object" && "isEntity" in e;
 }
 
 export interface InboundRelationshipsManager {
@@ -58,9 +58,9 @@ export interface InboundRelationshipsManager {
 }
 
 export function isInboundRelationshipsManager(
-  e: object,
+  e: unknown,
 ): e is InboundRelationshipsManager {
-  return "inboundRels" in e;
+  return e && typeof e === "object" && "inboundRels" in e;
 }
 
 export interface IdentityManager {
@@ -68,8 +68,8 @@ export interface IdentityManager {
   isIdentityAttr(attr: attr.Attribute): boolean;
 }
 
-export function isIdentityManager(e: object): e is IdentityManager {
-  return "identity" in e;
+export function isIdentityManager(e: unknown): e is IdentityManager {
+  return e && typeof e === "object" && "identity" in e;
 }
 
 export interface EntityContentConsumer<T extends Entity> {
@@ -81,9 +81,9 @@ export interface EntityContentSupplier<T extends Entity> {
 }
 
 export function isEntityContentSupplier<T extends Entity>(
-  e: object,
+  e: unknown,
 ): e is EntityContentSupplier<T> {
-  return "supplySeedContent" in e;
+  return e && typeof e === "object" && "supplySeedContent" in e;
 }
 
 export interface PersistentEntity
@@ -91,16 +91,16 @@ export interface PersistentEntity
   readonly isPersistentEntity: true;
 }
 
-export function isPersistentEntity(e: object): e is PersistentEntity {
-  return "isPersistentEntity" in e;
+export function isPersistentEntity(e: unknown): e is PersistentEntity {
+  return e && typeof e === "object" && "isPersistentEntity" in e;
 }
 
 export interface TransientEntity extends Entity, Transient {
   readonly isTransientEntity: true;
 }
 
-export function isTransientEntity(e: object): e is TransientEntity {
-  return "isTransientEntity" in e;
+export function isTransientEntity(e: unknown): e is TransientEntity {
+  return e && typeof e === "object" && "isTransientEntity" in e;
 }
 
 export interface EntityAttrValues<T extends Entity> {

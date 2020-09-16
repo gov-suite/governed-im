@@ -1,10 +1,10 @@
 import * as core from "../core/mod.ts";
-import * as ta from "./attribute.ts";
-import {
+import type * as ta from "./attribute.ts";
+import type {
   contextMgr as cm,
   namespaceMgr as ns,
 } from "./deps.ts";
-import * as tpe from "./persistent-entity.ts";
+import type * as tpe from "./persistent-entity.ts";
 
 export interface TypicalTransientEntityParams {
   readonly attrFactory: core.EagsAttrFactory;
@@ -61,41 +61,41 @@ export class TypicalTransientEntity implements core.TransientEntity {
 
   public text(
     name: string,
-    required: boolean = true,
-    maxLength: number = 255,
+    required = true,
+    maxLength = 255,
   ): core.Text {
     return this.params.attrFactory.text(this, name, { required, maxLength });
   }
 
   public encryptedText(
     name: string,
-    required: boolean = true,
+    required = true,
   ): core.EncryptedText {
     return this.params.attrFactory.encryptedText(this, name, { required });
   }
 
-  public integer(name: string, required: boolean = true): core.Integer {
+  public integer(name: string, required = true): core.Integer {
     return this.params.attrFactory.integer(this, name, { required });
   }
 
-  public boolean(name: string, required: boolean = true): core.Boolean {
+  public boolean(name: string, required = true): core.Boolean {
     return this.params.attrFactory.boolean(this, name, { required });
   }
 
-  public dateTime(name: string, required: boolean = true): core.DateTime {
+  public dateTime(name: string, required = true): core.DateTime {
     return this.params.attrFactory.dateTime(this, name, { required });
   }
 
   public json(
     name: string,
-    required: boolean = true,
+    required = true,
   ): core.Json {
     return this.params.attrFactory.json(this, name, { required });
   }
 
   public jsonb(
     name: string,
-    required: boolean = true,
+    required = true,
   ): core.Jsonb {
     return this.params.attrFactory.jsonb(this, name, { required });
   }

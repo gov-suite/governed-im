@@ -6,7 +6,7 @@ import {
 } from "./deps.ts";
 import * as ent from "./entity.ts";
 import { DEFAULT_REGISTRY_KEY_MODULE } from "./registry.ts";
-import { Revision } from "./revision.ts";
+import type { Revision } from "./revision.ts";
 
 export type EnumerationKey = infl.InflectableValue;
 export type EnumAttrFactory = attr.EagsAttrFactory;
@@ -30,9 +30,9 @@ export type EnumerationValuesKeys<
 }[keyof T];
 
 export function isEnumerationValues<T extends Enumeration>(
-  o: any,
+  o: unknown,
 ): o is EnumerationValues<T> {
-  return "isEnumerationValues" in o;
+  return o && typeof o === "object" && "isEnumerationValues" in o;
 }
 
 export interface EnumerationValue {
@@ -41,9 +41,14 @@ export interface EnumerationValue {
   readonly value: string;
 }
 
-export function isEnumerationValue(o: object): o is EnumerationValue {
-  const ev = o as EnumerationValue;
-  return ev.id !== undefined && ev.value !== undefined;
+export function isEnumerationValue(o: unknown): o is EnumerationValue {
+  if (o && typeof o === "object") {
+    if ("id" in o && "value" in o) {
+      const ev = o as EnumerationValue;
+      return (ev.id !== undefined && ev.value !== undefined);
+    }
+  }
+  return false;
 }
 
 export interface EnumAttribute<T extends Enumeration>
@@ -164,6 +169,7 @@ export class DefaultEnumeration<T extends Enumeration>
         if (!row.code) row.code = enumCode;
         this.eaValues.push(
           {
+            // deno-lint-ignore no-explicit-any
             entity: (this as any),
             attrValues: [
               this.identity.value(enumValue.id),
@@ -176,7 +182,7 @@ export class DefaultEnumeration<T extends Enumeration>
     }
   }
 
-  isValidEnumerationValue(o: any): boolean {
+  isValidEnumerationValue(o: unknown): boolean {
     return o && isEnumerationValue(o) && this.isValidValue(o);
   }
 
@@ -204,7 +210,9 @@ export class DefaultEnumeration<T extends Enumeration>
   createRelationship<T extends Enumeration>(
     from: ent.Entity,
   ): EnumAttribute<T> {
+    // deno-lint-ignore no-this-alias
     const self = this;
+    // deno-lint-ignore no-explicit-any
     const selfRef = attr.reference<T>(this as any, this.identity);
     const attrFactory = this.params.attrFactory;
     const enumRel = new (class implements EnumAttribute<T> {
@@ -260,7 +268,9 @@ export class DefaultEnumeration<T extends Enumeration>
     from: ent.Entity,
     defaultValue: EnumerationValue,
   ): EnumAttribute<T> {
+    // deno-lint-ignore no-this-alias
     const self = this;
+    // deno-lint-ignore no-explicit-any
     const selfRef = attr.reference<T>(this as any, this.identity);
     const attrFactory = this.params.attrFactory;
     const enumRel = new (class implements EnumAttribute<T> {

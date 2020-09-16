@@ -1,8 +1,8 @@
 import * as core from "../core/mod.ts";
-import * as tic from "./content.ts";
-import { namespaceMgr as ns } from "./deps.ts";
-import * as tpe from "./persistent-entity.ts";
-import * as tte from "./transient-entity.ts";
+import type * as tic from "./content.ts";
+import type { namespaceMgr as ns } from "./deps.ts";
+import type * as tpe from "./persistent-entity.ts";
+import type * as tte from "./transient-entity.ts";
 
 export interface TypicalInfoModelStructParams {
   readonly entityParams: tpe.TypicalPersistentEntityParams;
@@ -18,7 +18,7 @@ export interface TypicalInfoModelStructParams {
 export abstract class TypicalInfoModelStructure
   implements core.InformationModelStructure {
   readonly isInformationModelStructure = true;
-  protected isFinalized: boolean = false;
+  protected isFinalized = false;
   abstract readonly namespace: ns.Namespace;
   abstract readonly entities: core.Entity[];
   readonly edges: core.InformationModelEdge[] = [];
@@ -53,10 +53,6 @@ export abstract class TypicalInfoModelStructure
             continue;
           }
         }
-        this.edges.push({
-          source: { entity: relEntity, attr: rel.fromAttr },
-          ref: rel.to,
-        });
       }
     }
 

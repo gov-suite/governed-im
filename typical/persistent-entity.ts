@@ -1,6 +1,6 @@
 import * as core from "../core/mod.ts";
-import * as ta from "./attribute.ts";
-import {
+import type * as ta from "./attribute.ts";
+import type {
   contextMgr as cm,
   namespaceMgr as ns,
 } from "./deps.ts";
@@ -88,6 +88,7 @@ export class TypicalPersistentEntity
   addSeedValues<T extends core.Entity>(
     ...attrValues: core.AttributeValue[]
   ) {
+    // deno-lint-ignore no-explicit-any
     this.seedContent.push({ entity: this as any, attrValues: attrValues });
   }
 
@@ -96,18 +97,19 @@ export class TypicalPersistentEntity
     childAttrName: core.AttributeName | "auto" = "auto",
     backRefName?: core.BackRefName,
   ): core.BelongsTo<T> {
+    // deno-lint-ignore no-explicit-any
     const selfRef = core.reference<T>(this as any, this.identity);
     const attrFactory = this.params.attrFactory;
     const belongsToRel = new (class implements core.BelongsTo<T> {
       readonly introduced = attrFactory.defaultRevision();
       readonly isAttribute: true = true;
-      readonly isRelationship: boolean = true;
-      readonly isBelongsToRelationship: boolean = true;
-      readonly isDerived: boolean = false;
+      readonly isRelationship = true;
+      readonly isBelongsToRelationship = true;
+      readonly isDerived = false;
       readonly name: core.AttributeName = childAttrName === "auto"
         ? core.attributeNameReference(selfRef)
         : childAttrName;
-      readonly isBackReferenced: boolean = backRefName ? true : false;
+      readonly isBackReferenced = backRefName ? true : false;
       readonly backRefName: core.BackRefName = backRefName
         ? backRefName
         : selfRef.entity.name;
@@ -132,6 +134,7 @@ export class TypicalPersistentEntity
           core.DEFAULT_REGISTRY_KEY_MODULE + ".attr.Relationship",
         ];
       }
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): core.AttributeValue {
         return {
           attr: this,
@@ -152,16 +155,17 @@ export class TypicalPersistentEntity
     child: core.Entity,
     childAttrName: core.AttributeName | "auto" = "auto",
   ): core.Extends<T> {
+    // deno-lint-ignore no-explicit-any
     const selfRef = core.reference<T>(this as any, this.identity);
     const attrFactory = this.params.attrFactory;
     const isExtends = new (class implements core.Extends<T> {
       readonly introduced = attrFactory.defaultRevision();
       readonly isAttribute: true = true;
       readonly isIdentity: true = true;
-      readonly isRelationship: boolean = true;
+      readonly isRelationship = true;
       readonly isOneToOneToRelationship = true;
-      readonly isExtendsRelationship: boolean = true;
-      readonly isDerived: boolean = false;
+      readonly isExtendsRelationship = true;
+      readonly isDerived = false;
       readonly name: core.AttributeName = childAttrName === "auto"
         ? core.attributeNameReference(selfRef)
         : childAttrName;
@@ -185,6 +189,7 @@ export class TypicalPersistentEntity
           core.DEFAULT_REGISTRY_KEY_MODULE + ".attr.Relationship",
         ];
       }
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): core.AttributeValue {
         return {
           attr: this,
@@ -240,8 +245,8 @@ export class TypicalPersistentEntity
 
   public text(
     name: string,
-    required: boolean = true,
-    maxLength: number = 255,
+    required = true,
+    maxLength = 255,
   ): core.Text {
     return this.params.attrFactory.text(
       this,
@@ -252,33 +257,33 @@ export class TypicalPersistentEntity
 
   public encryptedText(
     name: string,
-    required: boolean = true,
+    required = true,
   ): core.EncryptedText {
     return this.params.attrFactory.encryptedText(this, name, { required });
   }
 
-  public integer(name: string, required: boolean = true): core.Integer {
+  public integer(name: string, required = true): core.Integer {
     return this.params.attrFactory.integer(this, name, { required });
   }
 
-  public dateTime(name: string, required: boolean = true): core.DateTime {
+  public dateTime(name: string, required = true): core.DateTime {
     return this.params.attrFactory.dateTime(this, name, { required });
   }
 
-  public boolean(name: string, required: boolean = true): core.Boolean {
+  public boolean(name: string, required = true): core.Boolean {
     return this.params.attrFactory.boolean(this, name, { required });
   }
 
   public Json(
     name: string,
-    required: boolean = true,
+    required = true,
   ): core.Json {
     return this.params.attrFactory.json(this, name, { required });
   }
 
   public Jsonb(
     name: string,
-    required: boolean = true,
+    required = true,
   ): core.Jsonb {
     return this.params.attrFactory.jsonb(this, name, { required });
   }

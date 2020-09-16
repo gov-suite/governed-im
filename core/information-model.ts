@@ -1,6 +1,6 @@
-import * as attr from "./attribute.ts";
-import { namespaceMgr as ns } from "./deps.ts";
-import * as ent from "./entity.ts";
+import type * as attr from "./attribute.ts";
+import type { namespaceMgr as ns } from "./deps.ts";
+import type * as ent from "./entity.ts";
 
 export interface InformationModelEdge {
   source: attr.Reference<ent.Entity>;
@@ -16,9 +16,9 @@ export interface InformationModelStructure {
 }
 
 export function isInformationModelStructure(
-  x: any,
+  x: unknown,
 ): x is InformationModelStructure {
-  return typeof x === "object" && "isInformationModelStructure" in x;
+  return x && typeof x === "object" && "isInformationModelStructure" in x;
 }
 
 export interface InformationModelContentConsumer<T extends ent.Entity> {
@@ -47,7 +47,7 @@ export interface InformationModel {
 }
 
 export function isInformationModel(
-  x: any,
+  x: unknown,
 ): x is InformationModel {
-  return typeof x === "object" && "isInformationModel" in x;
+  return x && typeof x === "object" && "isInformationModel" in x;
 }

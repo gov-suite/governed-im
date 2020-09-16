@@ -1,7 +1,7 @@
 import { contextMgr as cm, inflect as infl, valueMgr as vm } from "./deps.ts";
 import { BackRefName, Entity, isIdentityManager } from "./entity.ts";
 import { DEFAULT_REGISTRY_KEY_MODULE } from "./registry.ts";
-import { Revision } from "./revision.ts";
+import type { Revision } from "./revision.ts";
 
 type RelationalColumnName = infl.InflectableValue;
 type ObjectFieldName = infl.InflectableValue;
@@ -72,11 +72,13 @@ export interface Attribute {
   registryKeys(ctx: cm.Context): AttributeRegistryKeys;
   isRequired(ctx: cm.Context): boolean;
   valueSupplier?(ctx: cm.Context): AttributeValueSupplier;
+
+  // deno-lint-ignore no-explicit-any
   value(supplied: any): AttributeValue;
 }
 
-export function isAttribute(o: any): o is Attribute {
-  return typeof o === "object" && "isAttribute" in o;
+export function isAttribute(o: unknown): o is Attribute {
+  return o && typeof o === "object" && "isAttribute" in o;
 }
 
 export interface AttributesCollection {
@@ -84,8 +86,8 @@ export interface AttributesCollection {
   readonly attrs: Attribute[];
 }
 
-export function isAttributesCollection(o: any): o is AttributesCollection {
-  return typeof o === "object" && "isAttributesCollection" in o;
+export function isAttributesCollection(o: unknown): o is AttributesCollection {
+  return o && typeof o === "object" && "isAttributesCollection" in o;
 }
 
 export type AttrsStaticallyDeclaredInObject<T> = {
@@ -95,21 +97,24 @@ export type AttrsStaticallyDeclaredInObject<T> = {
 export type StaticallyDeclaredAttrsRecord<T extends AttributesCollection> = {
   [A in AttrsStaticallyDeclaredInObject<T>]?: T[A] extends Text ? vm.TextValue
     : (T[A] extends Identity ? { itype?: T[A]; iv: vm.NumericValue }
-      : ((T[A] extends Relationship<any> ? vm.NumericValue
-        : (T[A] extends Number ? vm.NumericValue : vm.Value))));
+      : // deno-lint-ignore no-explicit-any
+      ((T[A] extends Relationship<any> ? vm.NumericValue
+        : // deno-lint-ignore ban-types
+        (T[A] extends Number ? vm.NumericValue : vm.Value))));
 };
 
 export interface AttributeValue {
   readonly attr: Attribute;
+  // deno-lint-ignore no-explicit-any
   readonly attrValue: any;
   readonly isValid: boolean;
   readonly error?: string;
 }
 
 export function isAttributeValue(
-  o: object,
+  o: unknown,
 ): o is AttributeValue {
-  return "isAttributeValue" in o;
+  return o && typeof o === "object" && "isAttributeValue" in o;
 }
 
 export interface AttributeValueSupplier {
@@ -204,6 +209,7 @@ export interface Boolean extends Attribute {
   readonly isDefaultBooleanValue?: boolean;
 }
 
+// deno-lint-ignore ban-types
 export function isBoolean(a: Attribute): a is Boolean {
   return "isBoolean" in a;
 }
@@ -343,9 +349,9 @@ export interface EagsAttrFactorySupplier {
 }
 
 export function isEagsAttrFactorySupplier(
-  o: any,
+  o: unknown,
 ): o is EagsAttrFactorySupplier {
-  return "attrFactory" in o;
+  return o && typeof o === "object" && "attrFactory" in o;
 }
 
 export class EagsAttrFactory {
@@ -357,6 +363,7 @@ export class EagsAttrFactory {
     parent: Entity,
     options?: { name?: string | AttributeName; derivedFrom?: Attribute },
   ): DateTime {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     const attrName = options?.name || attributeName("created_at");
     return new (class implements DateTime {
@@ -389,6 +396,7 @@ export class EagsAttrFactory {
       registryKeys(ctx: cm.Context): AttributeRegistryKeys {
         return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.DateTime"];
       }
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): AttributeValue {
         return {
           attr: this,
@@ -403,6 +411,7 @@ export class EagsAttrFactory {
     parent: Entity,
     options?: { name?: string | AttributeName; derivedFrom?: Attribute },
   ): DateTime {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     const attrName = options?.name || attributeName("updated_on");
     return new (class implements DateTime {
@@ -434,6 +443,8 @@ export class EagsAttrFactory {
       registryKeys(ctx: cm.Context): AttributeRegistryKeys {
         return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.DateTime"];
       }
+
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): AttributeValue {
         return {
           attr: this,
@@ -448,6 +459,7 @@ export class EagsAttrFactory {
     entity: Entity,
     options?: { derivedFrom?: Attribute },
   ): NumericIdentity {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements NumericIdentity {
       readonly introduced: Revision = factory.defaultRevision();
@@ -489,6 +501,7 @@ export class EagsAttrFactory {
     entity: Entity,
     options?: { derivedFrom?: Attribute },
   ): AutoIdentityNative {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements AutoIdentityNative {
       readonly introduced: Revision = factory.defaultRevision();
@@ -540,6 +553,7 @@ export class EagsAttrFactory {
     name: string | AttributeName,
     options?: { derivedFrom?: Attribute },
   ): TextIdentity {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements Text, Identity {
       readonly introduced: Revision = factory.defaultRevision();
@@ -588,6 +602,7 @@ export class EagsAttrFactory {
       derivedFrom?: Attribute;
     },
   ): Text {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements Text {
       readonly introduced: Revision = factory.defaultRevision();
@@ -634,6 +649,7 @@ export class EagsAttrFactory {
       derivedFrom?: Attribute;
     },
   ): EncryptedText {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements EncryptedText {
       readonly introduced: Revision = factory.defaultRevision();
@@ -677,6 +693,7 @@ export class EagsAttrFactory {
     name: string | AttributeName,
     options?: { required?: boolean; derivedFrom?: Attribute },
   ): Integer {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements Integer {
       readonly introduced: Revision = factory.defaultRevision();
@@ -718,7 +735,9 @@ export class EagsAttrFactory {
     entity: Entity,
     name: string | AttributeName,
     options?: { required?: boolean; derivedFrom?: Attribute },
+    // deno-lint-ignore no-ban-types
   ): Boolean {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements Boolean {
       readonly introduced: Revision = factory.defaultRevision();
@@ -745,6 +764,8 @@ export class EagsAttrFactory {
       registryKeys(ctx: cm.Context): AttributeRegistryKeys {
         return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.Boolean"];
       }
+
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): AttributeValue {
         return {
           attr: this,
@@ -760,6 +781,7 @@ export class EagsAttrFactory {
     name: string | AttributeName,
     options?: { required?: boolean; derivedFrom?: Attribute },
   ): DateTime {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements DateTime {
       readonly introduced: Revision = factory.defaultRevision();
@@ -789,6 +811,7 @@ export class EagsAttrFactory {
       registryKeys(ctx: cm.Context): AttributeRegistryKeys {
         return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.DateTime"];
       }
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): AttributeValue {
         return {
           attr: this,
@@ -804,6 +827,7 @@ export class EagsAttrFactory {
     name: string | AttributeName,
     options?: { required?: boolean; derivedFrom?: Attribute },
   ): Json {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements Json {
       readonly introduced: Revision = factory.defaultRevision();
@@ -844,6 +868,7 @@ export class EagsAttrFactory {
     name: string | AttributeName,
     options?: { required?: boolean; derivedFrom?: Attribute },
   ): Jsonb {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements Jsonb {
       readonly introduced: Revision = factory.defaultRevision();
@@ -891,6 +916,7 @@ export class EagsAttrFactory {
     name: AttributeName = this.selfRefDefaultAttrName(),
     options?: { derivedFrom?: Attribute },
   ): SelfReference<T> {
+    // deno-lint-ignore no-this-alias
     const factory = this;
     return new (class implements SelfReference<T> {
       readonly introduced: Revision = factory.defaultRevision();
@@ -919,6 +945,8 @@ export class EagsAttrFactory {
           DEFAULT_REGISTRY_KEY_MODULE + ".attr.SelfReference",
         ];
       }
+
+      // deno-lint-ignore no-explicit-any
       value(supplied: any): AttributeValue {
         return {
           attr: this,

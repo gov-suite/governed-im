@@ -1,9 +1,9 @@
-import {
+import type {
   artfPersist as ap,
   contextMgr as cm,
   specModule as sm,
 } from "./deps.ts";
-import * as core from "../core/mod.ts";
+import type * as core from "../core/mod.ts";
 
 export interface InfoModelTransformer {
   readonly isInfoModelTransformer: true;

@@ -5,7 +5,7 @@ import {
   inflect as infl,
   namespaceMgr as ns,
 } from "./deps.ts";
-import * as typIM from "./info-model.ts";
+import type * as typIM from "./info-model.ts";
 
 export abstract class TypicalInfoModelContent
   implements core.InformationModelContent {
