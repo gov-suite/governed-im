@@ -53,6 +53,7 @@ export abstract class TypicalInfoModelStructure
             continue;
           }
         }
+        // for some reason, Deno Lint believes this code is unreachable.
         // deno-lint-ignore no-unreachable
         this.edges.push({
           source: { entity: relEntity, attr: rel.fromAttr },
