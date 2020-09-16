@@ -46,11 +46,14 @@ export abstract class TypicalInfoModelStructure
           const value = this.entityByIdentifier.get(identifier);
           if (value) {
             relEntity = value;
+            this.edges.push({
+              source: { entity: relEntity, attr: rel.fromAttr },
+              ref: rel.to,
+            });
           } else {
             console.error(
               `Unable to find ${entity.name.inflect()} in relationship ${rel.from.singular.inflect()}.${rel.fromAttr.name.relationalColumnName.inflect()}`,
             );
-            continue;
           }
         }
       }
