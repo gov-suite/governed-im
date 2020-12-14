@@ -1,4 +1,9 @@
-import { contextMgr as cm, inflect as infl, valueMgr as vm } from "./deps.ts";
+import {
+  contextMgr as cm,
+  inflect as infl,
+  safety,
+  valueMgr as vm,
+} from "./deps.ts";
 import { BackRefName, Entity, isIdentityManager } from "./entity.ts";
 import { DEFAULT_REGISTRY_KEY_MODULE } from "./registry.ts";
 import type { Revision } from "./revision.ts";
@@ -77,18 +82,16 @@ export interface Attribute {
   value(supplied: any): AttributeValue;
 }
 
-export function isAttribute(o: unknown): o is Attribute {
-  return o && typeof o === "object" && "isAttribute" in o;
-}
+export const isAttribute = safety.typeGuard<Attribute>("isAttribute");
 
 export interface AttributesCollection {
   readonly isAttributesCollection: true;
   readonly attrs: Attribute[];
 }
 
-export function isAttributesCollection(o: unknown): o is AttributesCollection {
-  return o && typeof o === "object" && "isAttributesCollection" in o;
-}
+export const isAttributesCollection = safety.typeGuard<AttributesCollection>(
+  "isAttributesCollection",
+);
 
 export type AttrsStaticallyDeclaredInObject<T> = {
   [K in keyof T]: T[K] extends Attribute ? K : never;
@@ -111,11 +114,10 @@ export interface AttributeValue {
   readonly error?: string;
 }
 
-export function isAttributeValue(
-  o: unknown,
-): o is AttributeValue {
-  return o && typeof o === "object" && "isAttributeValue" in o;
-}
+export const isAttributeValue = safety.typeGuard<AttributeValue>(
+  "attr",
+  "attrValue",
+);
 
 export interface AttributeValueSupplier {
   (ctx: cm.Context, attr: Attribute): AttributeValue;
@@ -348,11 +350,9 @@ export interface EagsAttrFactorySupplier {
   readonly attrFactory: EagsAttrFactory;
 }
 
-export function isEagsAttrFactorySupplier(
-  o: unknown,
-): o is EagsAttrFactorySupplier {
-  return o && typeof o === "object" && "attrFactory" in o;
-}
+export const isEagsAttrFactorySupplier = safety.typeGuard<
+  EagsAttrFactorySupplier
+>("attrFactory");
 
 export class EagsAttrFactory {
   public defaultRevision(): Revision {
@@ -735,7 +735,7 @@ export class EagsAttrFactory {
     entity: Entity,
     name: string | AttributeName,
     options?: { required?: boolean; derivedFrom?: Attribute },
-    // deno-lint-ignore no-ban-types
+    // deno-lint-ignore ban-types
   ): Boolean {
     // deno-lint-ignore no-this-alias
     const factory = this;

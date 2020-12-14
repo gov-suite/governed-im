@@ -3,6 +3,7 @@ import {
   contextMgr as cm,
   inflect as infl,
   namespaceMgr as ns,
+  safety,
 } from "./deps.ts";
 import type { Revision } from "./revision.ts";
 import type { Transient } from "./transient.ts";
@@ -48,29 +49,23 @@ export interface Entity extends attr.AttributesCollection {
   registryKeys(ctx: cm.Context): EntityRegistryKeys;
 }
 
-export function isEntity(e: unknown): e is Entity {
-  return e && typeof e === "object" && "isEntity" in e;
-}
+export const isEntity = safety.typeGuard<Entity>("isEntity");
 
 export interface InboundRelationshipsManager {
   readonly inboundRels: InboundRelationship<Entity>[];
   readonly backRefs?: InboundRelationshipBackRef<Entity>[];
 }
 
-export function isInboundRelationshipsManager(
-  e: unknown,
-): e is InboundRelationshipsManager {
-  return e && typeof e === "object" && "inboundRels" in e;
-}
+export const isInboundRelationshipsManager = safety.typeGuard<
+  InboundRelationshipsManager
+>("inboundRels");
 
 export interface IdentityManager {
   readonly identity: attr.Identity;
   isIdentityAttr(attr: attr.Attribute): boolean;
 }
 
-export function isIdentityManager(e: unknown): e is IdentityManager {
-  return e && typeof e === "object" && "identity" in e;
-}
+export const isIdentityManager = safety.typeGuard<IdentityManager>("identity");
 
 export interface EntityContentConsumer<T extends Entity> {
   (eav: EntityAttrValues<T>): void;
@@ -83,7 +78,10 @@ export interface EntityContentSupplier<T extends Entity> {
 export function isEntityContentSupplier<T extends Entity>(
   e: unknown,
 ): e is EntityContentSupplier<T> {
-  return e && typeof e === "object" && "supplySeedContent" in e;
+  const isEntityContentSupplier = safety.typeGuard<EntityContentSupplier<T>>(
+    "supplySeedContent",
+  );
+  return isEntityContentSupplier(e);
 }
 
 export interface PersistentEntity
@@ -91,17 +89,17 @@ export interface PersistentEntity
   readonly isPersistentEntity: true;
 }
 
-export function isPersistentEntity(e: unknown): e is PersistentEntity {
-  return e && typeof e === "object" && "isPersistentEntity" in e;
-}
+export const isPersistentEntity = safety.typeGuard<PersistentEntity>(
+  "isPersistentEntity",
+);
 
 export interface TransientEntity extends Entity, Transient {
   readonly isTransientEntity: true;
 }
 
-export function isTransientEntity(e: unknown): e is TransientEntity {
-  return e && typeof e === "object" && "isTransientEntity" in e;
-}
+export const isTransientEntity = safety.typeGuard<TransientEntity>(
+  "isTransientEntity",
+);
 
 export interface EntityAttrValues<T extends Entity> {
   readonly entity: T;

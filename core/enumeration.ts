@@ -3,6 +3,7 @@ import {
   contextMgr as cm,
   inflect as infl,
   namespaceMgr as ns,
+  safety,
 } from "./deps.ts";
 import * as ent from "./entity.ts";
 import { DEFAULT_REGISTRY_KEY_MODULE } from "./registry.ts";
@@ -32,7 +33,10 @@ export type EnumerationValuesKeys<
 export function isEnumerationValues<T extends Enumeration>(
   o: unknown,
 ): o is EnumerationValues<T> {
-  return o && typeof o === "object" && "isEnumerationValues" in o;
+  const isEnumerationValues = safety.typeGuard<EnumerationValues<T>>(
+    "isEnumerationValues",
+  );
+  return isEnumerationValues(o);
 }
 
 export interface EnumerationValue {
@@ -183,7 +187,8 @@ export class DefaultEnumeration<T extends Enumeration>
   }
 
   isValidEnumerationValue(o: unknown): boolean {
-    return o && isEnumerationValue(o) && this.isValidValue(o);
+    if (o && isEnumerationValue(o)) return this.isValidValue(o);
+    return false;
   }
 
   isValidValue(ev: EnumerationValue): boolean {

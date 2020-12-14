@@ -1,5 +1,6 @@
 import type * as attr from "./attribute.ts";
 import type { namespaceMgr as ns } from "./deps.ts";
+import { safety } from "./deps.ts";
 import type * as ent from "./entity.ts";
 
 export interface InformationModelEdge {
@@ -15,11 +16,9 @@ export interface InformationModelStructure {
   entity(name: ent.EntityName): ent.Entity | undefined;
 }
 
-export function isInformationModelStructure(
-  x: unknown,
-): x is InformationModelStructure {
-  return x && typeof x === "object" && "isInformationModelStructure" in x;
-}
+export const isInformationModelStructure = safety.typeGuard<
+  InformationModelStructure
+>("isInformationModelStructure");
 
 export interface InformationModelContentConsumer<T extends ent.Entity> {
   (imc: InformationModelContent, eeec: ent.ExecEnvsEntityContent<T>): void;
@@ -46,8 +45,6 @@ export interface InformationModel {
   consumeSourceCode(fn: InfoModelSourceCodeConsumer): void;
 }
 
-export function isInformationModel(
-  x: unknown,
-): x is InformationModel {
-  return x && typeof x === "object" && "isInformationModel" in x;
-}
+export const isInformationModel = safety.typeGuard<InformationModel>(
+  "isInformationModel",
+);

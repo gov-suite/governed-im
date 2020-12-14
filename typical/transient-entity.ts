@@ -1,9 +1,6 @@
 import * as core from "../core/mod.ts";
 import type * as ta from "./attribute.ts";
-import type {
-  contextMgr as cm,
-  namespaceMgr as ns,
-} from "./deps.ts";
+import type { contextMgr as cm, namespaceMgr as ns } from "./deps.ts";
 import type * as tpe from "./persistent-entity.ts";
 
 export interface TypicalTransientEntityParams {
