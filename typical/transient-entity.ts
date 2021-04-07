@@ -71,6 +71,13 @@ export class TypicalTransientEntity implements core.TransientEntity {
     return this.params.attrFactory.encryptedText(this, name, { required });
   }
 
+  public uuidText(
+    name: string,
+    required = true,
+  ): core.UuidText {
+    return this.params.attrFactory.uuidText(this, name, { required });
+  }
+
   public integer(name: string, required = true): core.Integer {
     return this.params.attrFactory.integer(this, name, { required });
   }

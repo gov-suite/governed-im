@@ -206,6 +206,15 @@ export function isEncryptedText(a: Attribute): a is EncryptedText {
   return "isEncryptedText" in a;
 }
 
+export interface UuidText extends Attribute {
+  readonly isUuidText: boolean;
+  readonly isDefaultUuidValue?: boolean;
+}
+
+export function isUuidText(a: Attribute): a is UuidText {
+  return "isUuidText" in a;
+}
+
 export interface Boolean extends Attribute {
   readonly isBoolean: boolean;
   readonly isDefaultBooleanValue?: boolean;
@@ -279,6 +288,13 @@ export function isDefaultToNow(a: Attribute): boolean {
 export function isDefaultBooleanValue(a: Attribute): boolean {
   if (isBoolean(a)) {
     if (a.isDefaultBooleanValue) return a.isDefaultBooleanValue;
+  }
+  return false;
+}
+
+export function isDefaultUuidValue(a: Attribute): boolean {
+  if (isUuidText(a)) {
+    if (a.isDefaultUuidValue) return a.isDefaultUuidValue;
   }
   return false;
 }
@@ -677,6 +693,52 @@ export class EagsAttrFactory {
       }
       registryKeys(ctx: cm.Context): AttributeRegistryKeys {
         return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.EncryptedText"];
+      }
+      value(supplied: string): AttributeValue {
+        return {
+          attr: this,
+          attrValue: supplied,
+          isValid: true,
+        };
+      }
+    })();
+  }
+
+  public uuidText(
+    entity: Entity,
+    name: string | AttributeName,
+    options?: {
+      required?: boolean;
+      derivedFrom?: Attribute;
+    },
+  ): UuidText {
+    // deno-lint-ignore no-this-alias
+    const factory = this;
+    return new (class implements UuidText {
+      readonly introduced: Revision = factory.defaultRevision();
+      readonly isAttribute: true = true;
+      readonly isRelationship: boolean = false;
+      readonly isDerived: boolean = options?.derivedFrom ? true : false;
+      readonly derivedFrom?: Attribute = options?.derivedFrom;
+      readonly isText: boolean = true;
+      readonly isUuidText: boolean = true;
+      readonly isDefaultUuidValue: boolean = true;
+      readonly name: AttributeName = typeof name === "string"
+        ? attributeName(name)
+        : name;
+      readonly parent = entity;
+      derive(newParent: Entity, daOptions?: DeriveAttributeOptions): Attribute {
+        return factory.uuidText(
+          newParent,
+          daOptions?.name || this.name,
+          { derivedFrom: daOptions?.derivedFrom || this },
+        );
+      }
+      isRequired(ctx: cm.Context): boolean {
+        return options ? (options.required ? true : false) : true;
+      }
+      registryKeys(ctx: cm.Context): AttributeRegistryKeys {
+        return [DEFAULT_REGISTRY_KEY_MODULE + ".attr.UuidText"];
       }
       value(supplied: string): AttributeValue {
         return {
