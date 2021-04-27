@@ -40,7 +40,7 @@ export function isEnumerationValues<T extends Enumeration>(
 }
 
 export interface EnumerationValue {
-  readonly id: number;
+  readonly id: number | string;
   readonly code?: string; // this is usually mapped from Typescript's constant name
   readonly value: string;
 }
